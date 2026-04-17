@@ -227,6 +227,9 @@ const Play = () => {
               <Button small secondary onClick={leaveTable}>
                 Leave
               </Button>
+              <Button small secondary type="button" onClick={() => window.open('/ledger', '_blank')}>
+                Transactions
+              </Button>
             </PositionedUISlot>
           </>
         )}

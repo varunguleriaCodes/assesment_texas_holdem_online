@@ -7,6 +7,6 @@ const { getLedger, getTransaction } = require('../../controllers/ledger');
 router.get('/', validateToken, getLedger);
 
 // GET /api/ledger/:transactionId -- Transaction Details
-router.get('/:transactionId', validateToken, getTransaction);
+router.get('/transaction/:transactionId', validateToken, getTransaction);
 
 module.exports = router;

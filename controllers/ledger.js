@@ -41,8 +41,7 @@ exports.getLedger = asyncHandler(async (req, res) => {
 // Used to get Details of a single transaction.
 exports.getTransaction = asyncHandler(async (req, res) => {
   const { transactionId } = req.params;
-  const transaction = mockDataStore.ledger.findByTransactionIdAndUserId(transactionId, req.user.id);
-
+  const transaction = mockDataStore.ledger.findByTransactionIdAndUserId(transactionId, req?.user?.id);
 
   if (!transaction) {
     throw new NotFoundError(ERROR_MESSAGES.TRANSACTION_NOT_FOUND);

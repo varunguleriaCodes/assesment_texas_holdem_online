@@ -21,6 +21,7 @@ const ERROR_MESSAGES = {
   VALIDATION_FAILED: 'Validation failed',
   INTERNAL_ERROR: 'Internal server error',
   INVALID_REQUEST: 'Invalid request',
+  TRANSACTION_NOT_FOUND: 'Transaction not found',
 };
 
 const SUCCESS_MESSAGES = {
@@ -28,6 +29,8 @@ const SUCCESS_MESSAGES = {
   REGISTRATION_SUCCESS: 'Registration successful',
   USER_RETRIEVED: 'User retrieved successfully',
   CHIPS_ADDED: 'Chips added successfully',
+  LEDGER_RETRIEVED: 'Ledger is retrieved successfully',
+  LEDGER_TRANSACTION_RETRIEVED: 'Transaction is retrieved successfully',
 };
 
 const VALIDATION = {
@@ -37,9 +40,24 @@ const VALIDATION = {
   EMAIL_MAX_LENGTH: 255,
 };
 
+const TRANSACTION_TYPES = {
+  BUY_IN: 'buy_in',
+  CASH_OUT: 'cash_out',
+  FREE_CHIPS: 'free_chips',
+  WIN: 'win',
+  LOSS: 'loss',
+};
+
+const PAGINATION = {
+  DEFAULT_LIMIT: 20,
+  MAX_LIMIT: 100,
+};
+
 module.exports = {
   HTTP_STATUS,
   ERROR_MESSAGES,
   SUCCESS_MESSAGES,
   VALIDATION,
+  TRANSACTION_TYPES,
+  PAGINATION,
 };

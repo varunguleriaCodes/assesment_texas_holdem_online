@@ -1,5 +1,5 @@
 const config = require('../config');
-
+const {TRANSACTION_TYPES} = require('./constants');
 /**
  * In-memory mock data store for demo purposes
  * This replaces database operations for the demo project
@@ -35,8 +35,91 @@ const initializeMockData = () => {
   nextUserId = 3;
 };
 
+
+let transactions = [];
+let nextTransactionId = 1;
+
+/**
+ * Initialize mock ledger data with demo transactions for users.
+ */
+const initializeLedger = () => {
+  transactions = [
+    {
+      id: String(nextTransactionId++),
+      userId: '1',
+      type: TRANSACTION_TYPES.BUY_IN,
+      amount: 1000,
+      balance: 1000,
+      description: 'Initial buy-in',
+      tableId: 'table-1',
+      createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+    },
+    {
+      id: String(nextTransactionId++),
+      userId: '1',
+      type: TRANSACTION_TYPES.WIN,
+      amount: 250,
+      balance: 1250,
+      description: 'Won hand',
+      tableId: 'table-1',
+      createdAt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000),
+    },
+    {
+      id: String(nextTransactionId++),
+      userId: '1',
+      type: TRANSACTION_TYPES.LOSS,
+      amount: -400,
+      balance: 850,
+      description: 'Lost hand',
+      tableId: 'table-1',
+      createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+    },
+    {
+      id: String(nextTransactionId++),
+      userId: '1',
+      type: TRANSACTION_TYPES.FREE_CHIPS,
+      amount: 1000,
+      balance: 1850,
+      description: 'Free chips awarded',
+      tableId: null,
+      createdAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000),
+    },
+    {
+      id: String(nextTransactionId++),
+      userId: '1',
+      type: TRANSACTION_TYPES.CASH_OUT,
+      amount: -1850,
+      balance: 0,
+      description: 'Cash-out',
+      tableId: 'table-1',
+      createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+    },
+    {
+      id: String(nextTransactionId++),
+      userId: '2',
+      type: TRANSACTION_TYPES.BUY_IN,
+      amount: 1000,
+      balance: 1000,
+      description: 'Initial buy-in',
+      tableId: 'table-2',
+      createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+    },
+    {
+      id: String(nextTransactionId++),
+      userId: '2',
+      type: TRANSACTION_TYPES.WIN,
+      amount: 500,
+      balance: 1500,
+      description: 'Won hand',
+      tableId: 'table-2',
+      createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+    },
+  ];
+};
+
 // Initialize on module load
 initializeMockData();
+initializeLedger();
 
 /**
  * Mock Data Store
@@ -143,8 +226,68 @@ const mockDataStore = {
      */
     reset: () => {
       initializeMockData();
+        },
+  },
+
+  ledger: {
+    /**
+     * Get transactions for a user in sorted order with newest first.
+     * @param {string} userId
+     * @param {Object} userTransactionOptions - Contains limit and offset for pagination
+     * @returns {{ transactions: Array, total: number }}
+     */
+    findByUserId: (userId, userTransactionOptions = {}) => {
+      const { limit = 20, offset = 0 } = userTransactionOptions;
+      if (!userId) return { transactions: [], total: 0 };
+      const userTxs = transactions
+        .filter((tx) => tx.userId === String(userId))
+        .sort((a, b) => b.createdAt - a.createdAt);
+      return {
+        transactions: userTxs.slice(offset, offset + limit),
+        total: userTxs.length,
+      };
     },
+
+    /**
+     * Get a single transaction by ID, only if it belongs to userId.
+     * @param {string} transactionId
+     * @param {string} userId
+     * @returns {Object|null}
+     */
+    findByTransactionIdAndUserId: (transactionId, userId) => {
+      if (!transactionId || !userId) return null;
+      return (
+        transactions.find(
+          (tx) => tx.id === String(transactionId) && tx.userId === String(userId),
+        ) || null
+      );
+    },
+
+    /**
+     * Append a new transaction.
+     * @param {Object} transactionData
+     * @returns {Object} Created transaction
+     */
+    create: (transactionData) => {
+      const tx = {
+        id: String(nextTransactionId++),
+        userId: String(transactionData.userId),
+        type: transactionData.type,
+        amount: transactionData.amount,
+        balance: transactionData.balance,
+        description: transactionData.description || '',
+        tableId: transactionData.tableId || null,
+        createdAt: new Date(),
+      };
+      transactions.push(tx);
+      return tx;
+    },
+        /**
+     * Reset mock transaction data to initial state
+     */
+    reset: () => {
+      initializeLedger();    },
   },
 };
 
-module.exports = mockDataStore;
+module.exports =  mockDataStore ;
